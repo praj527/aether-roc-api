@@ -15,7 +15,7 @@ import (
 	aether_2_0_0 "github.com/onosproject/aether-roc-api/pkg/aether_2_0_0/server"
 	aether_4_0_0 "github.com/onosproject/aether-roc-api/pkg/aether_4_0_0/server"
 	externalRef0 "github.com/onosproject/aether-roc-api/pkg/toplevel/types"
-	"github.com/onosproject/onos-api/go/onos/config/diags"
+	"github.com/onosproject/onos-api/go/onos/config/admin"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/openconfig/gnmi/proto/gnmi"
 	htmltemplate "html/template"
@@ -79,8 +79,14 @@ func (i *ServerImpl) grpcGetTransactions(ctx context.Context) (*externalRef0.Tra
 	log.Infof("grpcGetTransactions - subscribe=false")
 
 	// At present (Jan '22) ListTransactions is not implemented - use ListNetworkChanges
-	stream, err := i.ConfigClient.ListNetworkChanges(ctx, &diags.ListNetworkChangeRequest{
-		Subscribe: false,
+	//stream, err := i.ConfigClient.ListNetworkChanges(ctx, &diags.ListNetworkChangeRequest{
+	//	Subscribe: false,
+	//})
+
+	stream, err := i.ConfigClient.ListTransactions(ctx, &admin.ListTransactionsRequest{
+		XXX_NoUnkeyedLiteral: struct{}{},
+		XXX_unrecognized:     nil,
+		XXX_sizecache:        0,
 	})
 	if err != nil {
 		return nil, errors.FromGRPC(err)
@@ -91,10 +97,11 @@ func (i *ServerImpl) grpcGetTransactions(ctx context.Context) (*externalRef0.Tra
 		if err == io.EOF || networkChange == nil {
 			break
 		}
-		created := networkChange.GetChange().GetCreated()
-		updated := networkChange.GetChange().GetUpdated()
-		deleted := networkChange.GetChange().GetDeleted()
-		username := networkChange.GetChange().GetUsername()
+		objMeta := networkChange.GetTransaction().ObjectMeta
+		created := networkChange.GetTransaction().GetCreated()
+		updated := networkChange.GetTransaction().GetUpdated()
+		deleted := networkChange.GetTransaction().GetDeleted()
+		username := networkChange.GetTransaction().GetUsername()
 
 		status := struct {
 			Phase externalRef0.TransactionStatusPhase
@@ -153,7 +160,7 @@ func (i *ServerImpl) grpcGetTransactions(ctx context.Context) (*externalRef0.Tra
 // ServerImpl -
 type ServerImpl struct {
 	GnmiClient    southbound.GnmiClient
-	ConfigClient  diags.ChangeServiceClient
+	ConfigClient  admin.TransactionServiceClient
 	Authorization bool
 }
 
