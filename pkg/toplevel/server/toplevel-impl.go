@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // server-interface template override
@@ -97,59 +98,41 @@ func (i *ServerImpl) grpcGetTransactions(ctx context.Context) (*externalRef0.Tra
 		if err == io.EOF || networkChange == nil {
 			break
 		}
-		objMeta := networkChange.GetTransaction().ObjectMeta
 		created := networkChange.GetTransaction().GetCreated()
 		updated := networkChange.GetTransaction().GetUpdated()
 		deleted := networkChange.GetTransaction().GetDeleted()
 		username := networkChange.GetTransaction().GetUsername()
+		key := networkChange.GetTransaction().GetKey()
+		version := networkChange.GetTransaction().GetVersion()
 
-		status := struct {
-			Phase externalRef0.TransactionStatusPhase
-			State externalRef0.TransactionStatusState
+
+		objMeta := struct {
+			Created  *time.Time `json:"created,omitempty"`
+			Deleted  *time.Time `json:"deleted,omitempty"`
+			Key      *string    `json:"key,omitempty"`
+			Revision *struct {
+				Revision *int64 `json:"revision,omitempty"`
+			} `json:"revision,omitempty"`
+			Updated *time.Time `json:"updated,omitempty"`
+			Version *int64     `json:"version,omitempty"`
 		}{
-			Phase: externalRef0.NewTransactionStatusPhase(int(int(networkChange.GetChange().GetStatus().Phase))),
-			State: externalRef0.NewTransactionStatusState(int(int(networkChange.GetChange().GetStatus().State))),
+			Created: &created,
+			Deleted: deleted,
+			Key: &key,
+			Updated: &updated,
+			Version: &version,
 		}
+
 
 		transaction := externalRef0.Transaction{
-			Id:       string(networkChange.GetChange().GetID()),
-			Index:    int64(networkChange.GetChange().GetIndex()),
-			Revision: int64((networkChange.GetChange().GetRevision())),
-			Status: (*struct {
-				Phase externalRef0.TransactionStatusPhase `json:"phase"`
-				State externalRef0.TransactionStatusState `json:"state"`
-			})(&status),
-			Created:  &created,
-			Updated:  &updated,
-			Deleted:  &deleted,
-			Username: &username,
+			Details: nil,
+			Id:      "",
+			Index:   0,
+			Meta: objMeta,
+			Status:   nil,
+			Strategy: nil,
+			Username: nil,
 		}
-		changes := make([]externalRef0.Change, 0, len(networkChange.GetChange().GetChanges()))
-		for _, networkChangeChange := range networkChange.GetChange().GetChanges() {
-			targetType := string(networkChangeChange.GetDeviceType())
-			targetVer := string(networkChangeChange.GetDeviceVersion())
-			change := externalRef0.Change{
-				TargetId:      string(networkChangeChange.GetDeviceID()),
-				TargetType:    &targetType,
-				TargetVersion: &targetVer,
-			}
-
-			changeValues := make([]externalRef0.ChangeValue, 0, len(networkChangeChange.GetValues()))
-			for _, nccValue := range networkChangeChange.GetValues() {
-				removed := nccValue.GetRemoved()
-				value := nccValue.GetValue().ValueToString()
-				changeValue := externalRef0.ChangeValue{
-					Path:    nccValue.GetPath(),
-					Removed: &removed,
-					Value:   &value,
-				}
-				changeValues = append(changeValues, changeValue)
-			}
-			change.Values = &changeValues
-
-			changes = append(changes, change)
-		}
-		transaction.Changes = &changes
 
 		transactionList = append(transactionList, transaction)
 	}
