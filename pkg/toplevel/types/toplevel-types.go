@@ -301,7 +301,7 @@ type Transaction struct {
 
 		// the time at which the transaction was last updated
 		Updated *time.Time `json:"updated,omitempty"`
-		Version *int64     `json:"version,omitempty"`
+		Version *uint64    `json:"version,omitempty"`
 	} `json:"meta"`
 
 	// the current lifecycle status of the transaction
