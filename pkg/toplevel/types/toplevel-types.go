@@ -37,6 +37,56 @@ const (
 	TransactionStatusFailureTypeUNKNOWN TransactionStatusFailureType = "UNKNOWN"
 )
 
+// Defines values for TransactionStatusPhasesAbortState.
+const (
+	TransactionStatusPhasesAbortStateABORTED TransactionStatusPhasesAbortState = "ABORTED"
+
+	TransactionStatusPhasesAbortStateABORTING TransactionStatusPhasesAbortState = "ABORTING"
+)
+
+// Defines values for TransactionStatusPhasesApplyFailureType.
+const (
+	TransactionStatusPhasesApplyFailureTypeALREADYEXISTS TransactionStatusPhasesApplyFailureType = "ALREADY_EXISTS"
+
+	TransactionStatusPhasesApplyFailureTypeCANCELED TransactionStatusPhasesApplyFailureType = "CANCELED"
+
+	TransactionStatusPhasesApplyFailureTypeCONFLICT TransactionStatusPhasesApplyFailureType = "CONFLICT"
+
+	TransactionStatusPhasesApplyFailureTypeFORBIDDEN TransactionStatusPhasesApplyFailureType = "FORBIDDEN"
+
+	TransactionStatusPhasesApplyFailureTypeINTERNAL TransactionStatusPhasesApplyFailureType = "INTERNAL"
+
+	TransactionStatusPhasesApplyFailureTypeINVALID TransactionStatusPhasesApplyFailureType = "INVALID"
+
+	TransactionStatusPhasesApplyFailureTypeNOTFOUND TransactionStatusPhasesApplyFailureType = "NOT_FOUND"
+
+	TransactionStatusPhasesApplyFailureTypeNOTSUPPORTED TransactionStatusPhasesApplyFailureType = "NOT_SUPPORTED"
+
+	TransactionStatusPhasesApplyFailureTypeTIMEOUT TransactionStatusPhasesApplyFailureType = "TIMEOUT"
+
+	TransactionStatusPhasesApplyFailureTypeUNAUTHORIZED TransactionStatusPhasesApplyFailureType = "UNAUTHORIZED"
+
+	TransactionStatusPhasesApplyFailureTypeUNAVAILABLE TransactionStatusPhasesApplyFailureType = "UNAVAILABLE"
+
+	TransactionStatusPhasesApplyFailureTypeUNKNOWN TransactionStatusPhasesApplyFailureType = "UNKNOWN"
+)
+
+// Defines values for TransactionStatusPhasesApplyState.
+const (
+	TransactionStatusPhasesApplyStateAPPLIED TransactionStatusPhasesApplyState = "APPLIED"
+
+	TransactionStatusPhasesApplyStateAPPLYING TransactionStatusPhasesApplyState = "APPLYING"
+
+	TransactionStatusPhasesApplyStateFAILED TransactionStatusPhasesApplyState = "FAILED"
+)
+
+// Defines values for TransactionStatusPhasesCommitState.
+const (
+	TransactionStatusPhasesCommitStateCOMMITTED TransactionStatusPhasesCommitState = "COMMITTED"
+
+	TransactionStatusPhasesCommitStateCOMMITTING TransactionStatusPhasesCommitState = "COMMITTING"
+)
+
 // Defines values for TransactionStatusPhasesInitializeFailureType.
 const (
 	TransactionStatusPhasesInitializeFailureTypeALREADYEXISTS TransactionStatusPhasesInitializeFailureType = "ALREADY_EXISTS"
@@ -71,6 +121,42 @@ const (
 	TransactionStatusPhasesInitializeStateINITIALIZED TransactionStatusPhasesInitializeState = "INITIALIZED"
 
 	TransactionStatusPhasesInitializeStateINITIALIZING TransactionStatusPhasesInitializeState = "INITIALIZING"
+)
+
+// Defines values for TransactionStatusPhasesValidateFailureType.
+const (
+	TransactionStatusPhasesValidateFailureTypeALREADYEXISTS TransactionStatusPhasesValidateFailureType = "ALREADY_EXISTS"
+
+	TransactionStatusPhasesValidateFailureTypeCANCELED TransactionStatusPhasesValidateFailureType = "CANCELED"
+
+	TransactionStatusPhasesValidateFailureTypeCONFLICT TransactionStatusPhasesValidateFailureType = "CONFLICT"
+
+	TransactionStatusPhasesValidateFailureTypeFORBIDDEN TransactionStatusPhasesValidateFailureType = "FORBIDDEN"
+
+	TransactionStatusPhasesValidateFailureTypeINTERNAL TransactionStatusPhasesValidateFailureType = "INTERNAL"
+
+	TransactionStatusPhasesValidateFailureTypeINVALID TransactionStatusPhasesValidateFailureType = "INVALID"
+
+	TransactionStatusPhasesValidateFailureTypeNOTFOUND TransactionStatusPhasesValidateFailureType = "NOT_FOUND"
+
+	TransactionStatusPhasesValidateFailureTypeNOTSUPPORTED TransactionStatusPhasesValidateFailureType = "NOT_SUPPORTED"
+
+	TransactionStatusPhasesValidateFailureTypeTIMEOUT TransactionStatusPhasesValidateFailureType = "TIMEOUT"
+
+	TransactionStatusPhasesValidateFailureTypeUNAUTHORIZED TransactionStatusPhasesValidateFailureType = "UNAUTHORIZED"
+
+	TransactionStatusPhasesValidateFailureTypeUNAVAILABLE TransactionStatusPhasesValidateFailureType = "UNAVAILABLE"
+
+	TransactionStatusPhasesValidateFailureTypeUNKNOWN TransactionStatusPhasesValidateFailureType = "UNKNOWN"
+)
+
+// Defines values for TransactionStatusPhasesValidateState.
+const (
+	TransactionStatusPhasesValidateStateFAILED TransactionStatusPhasesValidateState = "FAILED"
+
+	TransactionStatusPhasesValidateStateINITIALIZED TransactionStatusPhasesValidateState = "INITIALIZED"
+
+	TransactionStatusPhasesValidateStateINITIALIZING TransactionStatusPhasesValidateState = "INITIALIZING"
 )
 
 // Defines values for TransactionStatusState.
@@ -231,13 +317,39 @@ type Transaction struct {
 
 		// the transaction phases
 		Phases *struct {
-			Abort *interface{} `json:"abort,omitempty"`
+			Abort *struct {
+				State  *TransactionStatusPhasesAbortState `json:"state,omitempty"`
+				Status *struct {
+					End   *time.Time `json:"end,omitempty"`
+					Start *time.Time `json:"start,omitempty"`
+				} `json:"status,omitempty"`
+			} `json:"abort,omitempty"`
 
 			// the transaction apply phase status
-			Apply *interface{} `json:"apply,omitempty"`
+			Apply *struct {
+
+				// the transaction failure
+				Failure *struct {
+					Description *string `json:"description,omitempty"`
+
+					// transaction failure type
+					Type *TransactionStatusPhasesApplyFailureType `json:"type,omitempty"`
+				} `json:"failure,omitempty"`
+				State  *TransactionStatusPhasesApplyState `json:"state,omitempty"`
+				Status *struct {
+					End   *time.Time `json:"end,omitempty"`
+					Start *time.Time `json:"start,omitempty"`
+				} `json:"status,omitempty"`
+			} `json:"apply,omitempty"`
 
 			// the transaction commit phase status
-			Commit *interface{} `json:"commit,omitempty"`
+			Commit *struct {
+				State  *TransactionStatusPhasesCommitState `json:"state,omitempty"`
+				Status *struct {
+					End   *time.Time `json:"end,omitempty"`
+					Start *time.Time `json:"start,omitempty"`
+				} `json:"status,omitempty"`
+			} `json:"commit,omitempty"`
 
 			// the transaction initialization phase status
 			Initialize *struct {
@@ -257,11 +369,25 @@ type Transaction struct {
 			} `json:"initialize,omitempty"`
 
 			// the transaction validation phase status
-			Validate *interface{} `json:"validate,omitempty"`
+			Validate *struct {
+
+				// the transaction failure
+				Failure *struct {
+					Description *string `json:"description,omitempty"`
+
+					// transaction failure type
+					Type *TransactionStatusPhasesValidateFailureType `json:"type,omitempty"`
+				} `json:"failure,omitempty"`
+				State  *TransactionStatusPhasesValidateState `json:"state,omitempty"`
+				Status *struct {
+					End   *time.Time `json:"end,omitempty"`
+					Start *time.Time `json:"start,omitempty"`
+				} `json:"status,omitempty"`
+			} `json:"validate,omitempty"`
 		} `json:"phases,omitempty"`
 
 		// the set of proposals managed by the transaction
-		Proposals *interface{} `json:"proposals,omitempty"`
+		Proposals *[]interface{} `json:"proposals,omitempty"`
 
 		// the overall transaction state
 		State *TransactionStatusState `json:"state,omitempty"`
@@ -282,11 +408,29 @@ type Transaction struct {
 // transaction failure type
 type TransactionStatusFailureType string
 
+// TransactionStatusPhasesAbortState defines model for Transaction.Status.Phases.Abort.State.
+type TransactionStatusPhasesAbortState string
+
+// transaction failure type
+type TransactionStatusPhasesApplyFailureType string
+
+// TransactionStatusPhasesApplyState defines model for Transaction.Status.Phases.Apply.State.
+type TransactionStatusPhasesApplyState string
+
+// TransactionStatusPhasesCommitState defines model for Transaction.Status.Phases.Commit.State.
+type TransactionStatusPhasesCommitState string
+
 // transaction failure type
 type TransactionStatusPhasesInitializeFailureType string
 
 // TransactionStatusPhasesInitializeState defines model for Transaction.Status.Phases.Initialize.State.
 type TransactionStatusPhasesInitializeState string
+
+// transaction failure type
+type TransactionStatusPhasesValidateFailureType string
+
+// TransactionStatusPhasesValidateState defines model for Transaction.Status.Phases.Validate.State.
+type TransactionStatusPhasesValidateState string
 
 // the overall transaction state
 type TransactionStatusState string
