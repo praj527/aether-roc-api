@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	externalRef0 "github.com/onosproject/aether-roc-api/pkg/aether_2_0_0/types"
-	externalRef1 "github.com/onosproject/aether-roc-api/pkg/aether_4_0_0/types"
+	externalRef0 "github.com/onosproject/aether-roc-api/pkg/aether_2_0_0/server"
+	externalRef1 "github.com/onosproject/aether-roc-api/pkg/aether_4_0_0/server"
 )
 
 // Base64 encoded, gzipped, json marshaled Swagger object
