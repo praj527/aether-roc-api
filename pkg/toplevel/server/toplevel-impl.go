@@ -114,11 +114,12 @@ func (i *ServerImpl) grpcGetTransactions(ctx context.Context) (*externalRef0.Tra
 				Revision *int64 `json:"revision,omitempty"`
 			} `json:"revision,omitempty"`
 			Updated *time.Time `json:"updated,omitempty"`
-			Version *int64     `json:"version,omitempty"`
+			Version *uint64     `json:"version,omitempty"`
 		}{
 			Created: &created,
 			Deleted: deleted,
 			Key: &key,
+			Revision: nil, //TODO: need to implement
 			Updated: &updated,
 			Version: &version,
 		}
@@ -126,12 +127,12 @@ func (i *ServerImpl) grpcGetTransactions(ctx context.Context) (*externalRef0.Tra
 
 		transaction := externalRef0.Transaction{
 			Details: nil,
-			Id:      "",
-			Index:   0,
+			Id:      string(networkChange.GetTransaction().GetID()),
+			Index:   int64(networkChange.GetTransaction().GetIndex()),
 			Meta: objMeta,
 			Status:   nil,
 			Strategy: nil,
-			Username: nil,
+			Username: &username,
 		}
 
 		transactionList = append(transactionList, transaction)
