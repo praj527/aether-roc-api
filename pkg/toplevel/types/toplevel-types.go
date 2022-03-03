@@ -37,6 +37,42 @@ const (
 	TransactionStatusFailureTypeUNKNOWN TransactionStatusFailureType = "UNKNOWN"
 )
 
+// Defines values for TransactionStatusPhasesInitializeFailureType.
+const (
+	TransactionStatusPhasesInitializeFailureTypeALREADYEXISTS TransactionStatusPhasesInitializeFailureType = "ALREADY_EXISTS"
+
+	TransactionStatusPhasesInitializeFailureTypeCANCELED TransactionStatusPhasesInitializeFailureType = "CANCELED"
+
+	TransactionStatusPhasesInitializeFailureTypeCONFLICT TransactionStatusPhasesInitializeFailureType = "CONFLICT"
+
+	TransactionStatusPhasesInitializeFailureTypeFORBIDDEN TransactionStatusPhasesInitializeFailureType = "FORBIDDEN"
+
+	TransactionStatusPhasesInitializeFailureTypeINTERNAL TransactionStatusPhasesInitializeFailureType = "INTERNAL"
+
+	TransactionStatusPhasesInitializeFailureTypeINVALID TransactionStatusPhasesInitializeFailureType = "INVALID"
+
+	TransactionStatusPhasesInitializeFailureTypeNOTFOUND TransactionStatusPhasesInitializeFailureType = "NOT_FOUND"
+
+	TransactionStatusPhasesInitializeFailureTypeNOTSUPPORTED TransactionStatusPhasesInitializeFailureType = "NOT_SUPPORTED"
+
+	TransactionStatusPhasesInitializeFailureTypeTIMEOUT TransactionStatusPhasesInitializeFailureType = "TIMEOUT"
+
+	TransactionStatusPhasesInitializeFailureTypeUNAUTHORIZED TransactionStatusPhasesInitializeFailureType = "UNAUTHORIZED"
+
+	TransactionStatusPhasesInitializeFailureTypeUNAVAILABLE TransactionStatusPhasesInitializeFailureType = "UNAVAILABLE"
+
+	TransactionStatusPhasesInitializeFailureTypeUNKNOWN TransactionStatusPhasesInitializeFailureType = "UNKNOWN"
+)
+
+// Defines values for TransactionStatusPhasesInitializeState.
+const (
+	TransactionStatusPhasesInitializeStateFAILED TransactionStatusPhasesInitializeState = "FAILED"
+
+	TransactionStatusPhasesInitializeStateINITIALIZED TransactionStatusPhasesInitializeState = "INITIALIZED"
+
+	TransactionStatusPhasesInitializeStateINITIALIZING TransactionStatusPhasesInitializeState = "INITIALIZING"
+)
+
 // Defines values for TransactionStatusState.
 const (
 	TransactionStatusStateAPPLIED TransactionStatusState = "APPLIED"
@@ -140,16 +176,18 @@ type TargetsNames []TargetName
 // Transaction refers to a multi-target transactional change. Taken from https://github.com/onosproject/onos-api/tree/master/proto/onos/config/v2
 type Transaction struct {
 
-	// is the transaction details
+	// the transaction details
 	Details *struct {
 		Change *struct {
 
-			// is a set of changes to apply to targets
+			// a set of changes to apply to targets
 			Values *interface{} `json:"values,omitempty"`
 		} `json:"change,omitempty"`
+
+		// rollback
 		Rollback *struct {
 
-			// is the index of the transaction to roll back
+			// the index of the transaction to roll back
 			RollbackIndex *int64 `json:"rollback_index,omitempty"`
 		} `json:"rollback,omitempty"`
 	} `json:"details,omitempty"`
@@ -180,10 +218,10 @@ type Transaction struct {
 		Version *int64     `json:"version,omitempty"`
 	} `json:"meta"`
 
-	// is the current lifecycle status of the transaction
+	// the current lifecycle status of the transaction
 	Status *struct {
 
-		// is the transaction failure
+		// the transaction failure
 		Failure *struct {
 			Description *string `json:"description,omitempty"`
 
@@ -191,27 +229,41 @@ type Transaction struct {
 			Type *TransactionStatusFailureType `json:"type,omitempty"`
 		} `json:"failure,omitempty"`
 
-		// is the transaction phases
+		// the transaction phases
 		Phases *struct {
 			Abort *interface{} `json:"abort,omitempty"`
 
-			// is the transaction apply phase status
+			// the transaction apply phase status
 			Apply *interface{} `json:"apply,omitempty"`
 
-			// is the transaction commit phase status
+			// the transaction commit phase status
 			Commit *interface{} `json:"commit,omitempty"`
 
-			// is the transaction initialization phase status
-			Initialize *interface{} `json:"initialize,omitempty"`
+			// the transaction initialization phase status
+			Initialize *struct {
 
-			// is the transaction validation phase status
+				// the transaction failure
+				Failure *struct {
+					Description *string `json:"description,omitempty"`
+
+					// transaction failure type
+					Type *TransactionStatusPhasesInitializeFailureType `json:"type,omitempty"`
+				} `json:"failure,omitempty"`
+				State  *TransactionStatusPhasesInitializeState `json:"state,omitempty"`
+				Status *struct {
+					End   *time.Time `json:"end,omitempty"`
+					Start *time.Time `json:"start,omitempty"`
+				} `json:"status,omitempty"`
+			} `json:"initialize,omitempty"`
+
+			// the transaction validation phase status
 			Validate *interface{} `json:"validate,omitempty"`
 		} `json:"phases,omitempty"`
 
-		// is the set of proposals managed by the transaction
+		// the set of proposals managed by the transaction
 		Proposals *interface{} `json:"proposals,omitempty"`
 
-		// is the overall transaction state
+		// the overall transaction state
 		State *TransactionStatusState `json:"state,omitempty"`
 	} `json:"status,omitempty"`
 	Strategy *struct {
@@ -230,7 +282,13 @@ type Transaction struct {
 // transaction failure type
 type TransactionStatusFailureType string
 
-// is the overall transaction state
+// transaction failure type
+type TransactionStatusPhasesInitializeFailureType string
+
+// TransactionStatusPhasesInitializeState defines model for Transaction.Status.Phases.Initialize.State.
+type TransactionStatusPhasesInitializeState string
+
+// the overall transaction state
 type TransactionStatusState string
 
 // indicates the transaction isolation level

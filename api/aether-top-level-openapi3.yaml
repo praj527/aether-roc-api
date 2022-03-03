@@ -189,40 +189,76 @@ components:
                 - DEFAULT
                 - SERIALIZABLE
         details:
-          description: is the transaction details
+          description: the transaction details
           properties:
             change:
               description:
               properties:
                 values:
-                  description: is a set of changes to apply to targets
+                  description: a set of changes to apply to targets
             rollback:
-              description:
+              description: rollback
               properties:
                 rollback_index:
-                  description: is the index of the transaction to roll back
+                  description: the index of the transaction to roll back
                   type: integer
                   format: int64
         status:
-          description: is the current lifecycle status of the transaction
+          description: the current lifecycle status of the transaction
           properties:
             phases:
-              description: is the transaction phases
+              description: the transaction phases
               properties:
                 initialize:
-                  description: is the transaction initialization phase status
+                  description: the transaction initialization phase status
+                  properties:
+                    status:
+                      properties:
+                        start:
+                          type: string
+                          format: date-time
+                        end:
+                          type: string
+                          format: date-time
+                    state:
+                      type: string
+                      enum:
+                        - INITIALIZING
+                        - INITIALIZED
+                        - FAILED
+                    failure:
+                      description: the transaction failure
+                      properties:
+                        type:
+                          description: transaction failure type
+                          type: string
+                          enum:
+                            - UNKNOWN
+                            - CANCELED
+                            - NOT_FOUND
+                            - ALREADY_EXISTS
+                            - UNAUTHORIZED
+                            - FORBIDDEN
+                            - CONFLICT
+                            - INVALID
+                            - UNAVAILABLE
+                            - NOT_SUPPORTED
+                            - TIMEOUT
+                            - INTERNAL
+                        description:
+                          type: string
                 validate:
-                  description: is the transaction validation phase status
+                  description: the transaction validation phase status
                 commit:
-                  description: is the transaction commit phase status
+                  description: the transaction commit phase status
                 apply:
-                  description: is the transaction apply phase status
+                  description: the transaction apply phase status
                 abort:
                   description:
             proposals:
-              description: is the set of proposals managed by the transaction
+              description: the set of proposals managed by the transaction
             state:
-              description: is the overall transaction state
+              description: the overall transaction state
               type: string
               enum:
                 - PENDING
@@ -231,7 +267,7 @@ components:
                 - APPLIED
                 - FAILED
             failure:
-              description: is the transaction failure
+              description: the transaction failure
               properties:
                 type:
                   description: transaction failure type
