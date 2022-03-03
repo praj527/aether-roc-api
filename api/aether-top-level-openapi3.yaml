@@ -194,6 +194,7 @@ components:
             change:
               description:
               properties:
+                #TODO: ChangeTransaction not implemented as its map
                 values:
                   description: a set of changes to apply to targets
             rollback:
