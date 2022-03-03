@@ -249,14 +249,115 @@ components:
                           type: string
                 validate:
                   description: the transaction validation phase status
+                  properties:
+                    status:
+                      properties:
+                        start:
+                          type: string
+                          format: date-time
+                        end:
+                          type: string
+                          format: date-time
+                    state:
+                      type: string
+                      enum:
+                        - INITIALIZING
+                        - INITIALIZED
+                        - FAILED
+                    failure:
+                      description: the transaction failure
+                      properties:
+                        type:
+                          description: transaction failure type
+                          type: string
+                          enum:
+                            - UNKNOWN
+                            - CANCELED
+                            - NOT_FOUND
+                            - ALREADY_EXISTS
+                            - UNAUTHORIZED
+                            - FORBIDDEN
+                            - CONFLICT
+                            - INVALID
+                            - UNAVAILABLE
+                            - NOT_SUPPORTED
+                            - TIMEOUT
+                            - INTERNAL
+                        description:
+                          type: string
                 commit:
                   description: the transaction commit phase status
+                  properties:
+                    status:
+                      properties:
+                        start:
+                          type: string
+                          format: date-time
+                        end:
+                          type: string
+                          format: date-time
+                    state:
+                      type: string
+                      enum:
+                        - COMMITTING
+                        - COMMITTED
                 apply:
                   description: the transaction apply phase status
+                  properties:
+                    status:
+                      properties:
+                        start:
+                          type: string
+                          format: date-time
+                        end:
+                          type: string
+                          format: date-time
+                    state:
+                      type: string
+                      enum:
+                        - APPLYING
+                        - APPLIED
+                        - FAILED
+                    failure:
+                      description: the transaction failure
+                      properties:
+                        type:
+                          description: transaction failure type
+                          type: string
+                          enum:
+                            - UNKNOWN
+                            - CANCELED
+                            - NOT_FOUND
+                            - ALREADY_EXISTS
+                            - UNAUTHORIZED
+                            - FORBIDDEN
+                            - CONFLICT
+                            - INVALID
+                            - UNAVAILABLE
+                            - NOT_SUPPORTED
+                            - TIMEOUT
+                            - INTERNAL
+                        description:
+                          type: string
                 abort:
                   description:
+                  properties:
+                    status:
+                      properties:
+                        start:
+                          type: string
+                          format: date-time
+                        end:
+                          type: string
+                          format: date-time
+                    state:
+                      type: string
+                      enum:
+                        - ABORTING
+                        - ABORTED
             proposals:
               description: the set of proposals managed by the transaction
+              type: array
             state:
               description: the overall transaction state
               type: string
@@ -287,7 +388,6 @@ components:
                     - INTERNAL
                 description:
                   type: string
-
       required:
         - id
         - index
